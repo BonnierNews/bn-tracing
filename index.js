@@ -44,14 +44,15 @@ export default ({ serviceName = "default", debug = false }) => {
 
   registerInstrumentations({
     instrumentations: [
-      // new ExpressInstrumentation({
-      //   requestHook: (span, info) => {
-      //     span.setAttribute("service.name", serviceName);
-      //     if (info.layerType === ExpressLayerType.REQUEST_HANDLER) {
-      //       span.setAttribute("express.base_url", info.request?.baseUrl);
-      //     }
-      //   },
-      // }),
+      new ExpressInstrumentation({
+        requestHook: (span, info) => {
+          span.setAttribute("service.name", serviceName);
+          if (info.layerType === ExpressLayerType.REQUEST_HANDLER) {
+            span.setAttribute("express.base_url", info.request?.baseUrl);
+          }
+        },
+        ignoreLayersType: ["middleware", "request_handler"],  
+      }),
       new HttpInstrumentation({
         requestHook: (span, request) => {
           span.updateName(`${request.method} ${request.host}${request.path}`);
