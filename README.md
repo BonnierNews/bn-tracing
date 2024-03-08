@@ -11,5 +11,6 @@ Install the npm-package and import it before express is required.
 {
   serviceName: String (Default: default)
   debug: Bool (default: false)
+  sampleRatio: Number (default: 0.01)
 }
 ```

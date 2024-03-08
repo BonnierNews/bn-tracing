@@ -13,7 +13,7 @@ import { detectResourcesSync } from "@opentelemetry/resources";
 import { gcpDetector } from "@opentelemetry/resource-detector-gcp";
 
 let providerRegistered = false;
-export default ({ serviceName = "default", debug = false }) => {
+export default ({ serviceName = "default", debug = false, sampleRatio = 0.01 }) => {
   if (providerRegistered) {
     return trace.getTracer(serviceName);
   }
@@ -34,7 +34,7 @@ export default ({ serviceName = "default", debug = false }) => {
 
   const provider = new NodeTracerProvider({
     resource,
-    sampler: new ParentBasedSampler({ root: new TraceIdRatioBasedSampler(0.01) }),
+    sampler: new ParentBasedSampler({ root: new TraceIdRatioBasedSampler(sampleRatio) }),
   });
 
   // Configure the span processor to send spans to the exporter
