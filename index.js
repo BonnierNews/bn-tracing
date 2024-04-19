@@ -31,7 +31,7 @@ export default ({
   serviceName = process.env.K_SERVICE, 
   batchExport = true,
   debug = false
-}) => {
+} = {}) => {
   if (providerRegistered) {
     return trace.getTracer(serviceName);
   }
