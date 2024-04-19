@@ -26,7 +26,7 @@ let providerRegistered = false;
 
  */
 export default ({ 
-  sampleRatio = 0,
+  sampleRatio = 0.01,
   instrumentations = [],
   serviceName = process.env.K_SERVICE, 
   batchExport = true,
@@ -52,7 +52,7 @@ export default ({
 
   const provider = new NodeTracerProvider({
     resource,
-    sampler: new ParentBasedSampler({ root: sampleRatio > 0 ? new TraceIdRatioBasedSampler(sampleRatio) : new AlwaysOffSampler() }),
+    sampler: new ParentBasedSampler({ root: new TraceIdRatioBasedSampler(sampleRatio) }),
   });
   // Configure the span processor to send spans to the exporter
   const spanProcessor = batchExport ? new BatchSpanProcessor(exporter) : new SimpleSpanProcessor(exporter);
