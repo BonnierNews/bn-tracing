@@ -5,7 +5,7 @@ import { ExpressInstrumentation, ExpressLayerType } from "@opentelemetry/instrum
 import { HttpInstrumentation } from "@opentelemetry/instrumentation-http";
 // NodeTracerProvider is the default tracer provider for Node.js
 // Necessary to register instrumentations
-import { NodeTracerProvider, ParentBasedSampler, TraceIdRatioBasedSampler } from "@opentelemetry/sdk-trace-node";
+import { NodeTracerProvider, ParentBasedSampler, TraceIdRatioBasedSampler, AlwaysOffSampler } from "@opentelemetry/sdk-trace-node";
 // Use sdk-trace base to send create manual traces and send them to the exporter
 import { SimpleSpanProcessor, BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
 import { TraceExporter } from "@google-cloud/opentelemetry-cloud-trace-exporter";
@@ -13,7 +13,7 @@ import { detectResourcesSync } from "@opentelemetry/resources";
 import { gcpDetector } from "@opentelemetry/resource-detector-gcp";
 
 let providerRegistered = false;
-export default ({ serviceName = "default", debug = false, sampleRatio = 0.01, instrumentations = [] }) => {
+export default ({ serviceName = "default", debug = false, root = false, instrumentations = [] }) => {
   if (providerRegistered) {
     return trace.getTracer(serviceName);
   }
@@ -34,7 +34,7 @@ export default ({ serviceName = "default", debug = false, sampleRatio = 0.01, in
 
   const provider = new NodeTracerProvider({
     resource,
-    sampler: new ParentBasedSampler({ root: new TraceIdRatioBasedSampler(sampleRatio) }),
+    sampler: new ParentBasedSampler({ root: root ? new TraceIdRatioBasedSampler(root.sampleRatio) : new AlwaysOffSampler() }),
   });
 
   // Configure the span processor to send spans to the exporter
