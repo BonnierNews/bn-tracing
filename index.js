@@ -13,7 +13,7 @@ import { detectResourcesSync } from "@opentelemetry/resources";
 import { gcpDetector } from "@opentelemetry/resource-detector-gcp";
 
 let providerRegistered = false;
-export default ({ serviceName = "default", debug = false, root = false, instrumentations = [] }) => {
+export default ({ serviceName = process.env.K_SERVICE, debug = false, root = undefined, instrumentations = [] }) => {
   if (providerRegistered) {
     return trace.getTracer(serviceName);
   }
