@@ -13,7 +13,13 @@ import { detectResourcesSync } from "@opentelemetry/resources";
 import { gcpDetector } from "@opentelemetry/resource-detector-gcp";
 
 let providerRegistered = false;
-export default ({ serviceName = process.env.K_SERVICE, debug = false, root = undefined, instrumentations = [] }) => {
+export default ({ 
+  serviceName = process.env.K_SERVICE, 
+  debug = false,
+  root = undefined,
+  instrumentations = [],
+  batchExport = true
+}) => {
   if (providerRegistered) {
     return trace.getTracer(serviceName);
   }
@@ -38,7 +44,8 @@ export default ({ serviceName = process.env.K_SERVICE, debug = false, root = und
   });
 
   // Configure the span processor to send spans to the exporter
-  provider.addSpanProcessor(new BatchSpanProcessor(exporter));
+  const spanProcessor = batchExport ? new BatchSpanProcessor(exporter) : new SimpleSpanProcessor(exporter);
+  provider.addSpanProcessor(spanProcessor);
   provider.register();
   providerRegistered = true;
 
