@@ -13,12 +13,24 @@ import { detectResourcesSync } from "@opentelemetry/resources";
 import { gcpDetector } from "@opentelemetry/resource-detector-gcp";
 
 let providerRegistered = false;
+/**
+ * Initialize the OpenTelemetry SDK and register instrumentations
+ * 
+ * param {number} sampleRatio - The ratio of traces to sample. 0 to disable sampling
+ * param {Array} instrumentations - Array of instrumentations to register
+ * param {string} serviceName - The name of the service
+ * param {boolean} batchExport - Whether to batch export traces
+ * param {boolean} debug - Whether to enable debug logging
+ * 
+ * return {Tracer} - The tracer instance
+
+ */
 export default ({ 
-  serviceName = process.env.K_SERVICE, 
-  debug = false,
-  root = undefined,
+  sampleRatio = 0,
   instrumentations = [],
-  batchExport = true
+  serviceName = process.env.K_SERVICE, 
+  batchExport = true,
+  debug = false
 }) => {
   if (providerRegistered) {
     return trace.getTracer(serviceName);
@@ -40,9 +52,8 @@ export default ({
 
   const provider = new NodeTracerProvider({
     resource,
-    sampler: new ParentBasedSampler({ root: root ? new TraceIdRatioBasedSampler(root.sampleRatio) : new AlwaysOffSampler() }),
+    sampler: new ParentBasedSampler({ root: sampleRatio > 0 ? new TraceIdRatioBasedSampler(sampleRatio) : new AlwaysOffSampler() }),
   });
-
   // Configure the span processor to send spans to the exporter
   const spanProcessor = batchExport ? new BatchSpanProcessor(exporter) : new SimpleSpanProcessor(exporter);
   provider.addSpanProcessor(spanProcessor);
