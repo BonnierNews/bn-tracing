@@ -12,5 +12,16 @@ Install the npm-package and import it before express is required.
   serviceName: String (Default: default)
   debug: Bool (default: false)
   sampleRatio: Number (default: 0.01)
+  instrumentations: Array (Default: [])
 }
+```
+
+# Usage example
+```js
+require('bn-tracing')({
+  serviceName: process.env.K_SERVICE,
+  instrumentations: [
+    new IORedisInstrumentation(),
+  ]
+});
 ```
