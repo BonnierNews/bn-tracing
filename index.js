@@ -7,7 +7,7 @@ import { HttpInstrumentation } from "@opentelemetry/instrumentation-http";
 // Necessary to register instrumentations
 import { NodeTracerProvider, ParentBasedSampler, TraceIdRatioBasedSampler } from "@opentelemetry/sdk-trace-node";
 // Use sdk-trace base to send create manual traces and send them to the exporter
-import { SimpleSpanProcessor, BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
+import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
 import { TraceExporter } from "@google-cloud/opentelemetry-cloud-trace-exporter";
 import { detectResourcesSync } from "@opentelemetry/resources";
 import { gcpDetector } from "@opentelemetry/resource-detector-gcp";
