@@ -16,9 +16,9 @@
   "dependencies": {
     "@google-cloud/opentelemetry-cloud-trace-exporter": "^2.1.0",
     "@opentelemetry/api": "^1.7.0",
-    "@opentelemetry/instrumentation": "^0.48.0",
+    "@opentelemetry/instrumentation": "^0.205.0",
     "@opentelemetry/instrumentation-express": "^0.35.0",
-    "@opentelemetry/instrumentation-http": "^0.48.0",
+    "@opentelemetry/instrumentation-http": "^0.205.0",
     "@opentelemetry/resource-detector-gcp": "^0.29.6",
     "@opentelemetry/resources": "^1.21.0",
     "@opentelemetry/sdk-trace-base": "^1.21.0",
