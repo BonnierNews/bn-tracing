@@ -1,0 +1,11 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "timezone": "Europe/Stockholm",
+  "rebaseWhen": "conflicted",
+  "extends": [
+    "config:js-lib",
+    "npm:unpublishSafe",
+    ":configMigration",
+    ":disableRateLimiting"
+  ]
+}
