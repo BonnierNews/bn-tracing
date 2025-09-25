@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "@bonniernews/eslint-config": "1.2.0",
-    "eslint": "8.57.1",
+    "eslint": "9.36.0",
     "rollup": "4.52.0"
   },
   "files": [
