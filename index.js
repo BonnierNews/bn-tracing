@@ -58,7 +58,7 @@ export default ({ serviceName = "default", debug = false, instrumentations = [] 
           span.setAttribute("service.name", serviceName);
         },
       }),
-      ...instrumentations
+      ...instrumentations,
     ],
   });
 
