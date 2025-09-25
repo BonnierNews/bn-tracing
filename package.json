@@ -20,9 +20,9 @@
     "@opentelemetry/instrumentation-express": "^0.54.0",
     "@opentelemetry/instrumentation-http": "^0.205.0",
     "@opentelemetry/resource-detector-gcp": "^0.40.0",
-    "@opentelemetry/resources": "^1.21.0",
-    "@opentelemetry/sdk-trace-base": "^1.21.0",
-    "@opentelemetry/sdk-trace-node": "^1.21.0"
+    "@opentelemetry/resources": "^2.0.0",
+    "@opentelemetry/sdk-trace-base": "^2.0.0",
+    "@opentelemetry/sdk-trace-node": "^2.0.0"
   },
   "devDependencies": {
     "@bonniernews/eslint-config": "1.2.0",
