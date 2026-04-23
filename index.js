@@ -21,10 +21,11 @@ export default ({ serviceName = "default", debug = false, instrumentations = [] 
 
   const exporter = new TraceExporter();
 
-  const provider = new NodeTracerProvider({ sampler: new ParentBasedSampler({ root: new TraceIdRatioBasedSampler(0.01) }) });
+  const provider = new NodeTracerProvider({
+    sampler: new ParentBasedSampler({ root: new TraceIdRatioBasedSampler(0.01) }),
+    spanProcessors: [ new BatchSpanProcessor(exporter) ],
+  });
 
-  // Configure the span processor to send spans to the exporter
-  provider.addSpanProcessor(new BatchSpanProcessor(exporter));
   provider.register();
   providerRegistered = true;
 
