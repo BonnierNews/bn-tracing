@@ -23,7 +23,7 @@
     "@opentelemetry/sdk-trace-node": "^2.7.0"
   },
   "devDependencies": {
-    "@bonniernews/eslint-config": "1.2.0",
+    "@bonniernews/eslint-config": "3.0.0",
     "eslint": "8.57.1",
     "rollup": "4.52.0"
   },
