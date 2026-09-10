@@ -8,7 +8,12 @@ import { HttpInstrumentation } from "@opentelemetry/instrumentation-http";
 import { NodeTracerProvider, ParentBasedSampler, TraceIdRatioBasedSampler } from "@opentelemetry/sdk-trace-node";
 // Use sdk-trace base to send create manual traces and send them to the exporter
 import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
-import { TraceExporter } from "@google-cloud/opentelemetry-cloud-trace-exporter";
+import { detectResources } from "@opentelemetry/resources";
+import { gcpDetector } from "@opentelemetry/resource-detector-gcp";
+import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-proto";
+import { GoogleAuth } from "google-auth-library";
+
+const auth = new GoogleAuth({ scopes: "https://www.googleapis.com/auth/cloud-platform" });
 
 let providerRegistered = false;
 export default ({ serviceName = "default", debug = false, instrumentations = [] }) => {
@@ -19,9 +24,18 @@ export default ({ serviceName = "default", debug = false, instrumentations = [] 
     diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
   }
 
-  const exporter = new TraceExporter();
+  const exporter = new OTLPTraceExporter({
+    url: "https://telemetry.googleapis.com/v1/traces",
+    async headers() {
+      const authClient = await auth.getClient();
+      return authClient.getRequestHeaders();
+    },
+  });
+
+  const resource = detectResources({ detectors: [ gcpDetector ] });
 
   const provider = new NodeTracerProvider({
+    resource,
     sampler: new ParentBasedSampler({ root: new TraceIdRatioBasedSampler(0.01) }),
     spanProcessors: [ new BatchSpanProcessor(exporter) ],
   });
