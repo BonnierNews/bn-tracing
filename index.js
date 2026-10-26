@@ -1,14 +1,13 @@
-import { diag, DiagConsoleLogger, DiagLogLevel, trace } from "@opentelemetry/api";
+import { context, diag, DiagConsoleLogger, DiagLogLevel, propagation, trace } from "@opentelemetry/api";
+import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
+import { CompositePropagator, W3CBaggagePropagator, W3CTraceContextPropagator } from "@opentelemetry/core";
 // Instrumentations intructs different libraries to automatically collect telemetry data
 import { registerInstrumentations } from "@opentelemetry/instrumentation";
 import { ExpressInstrumentation, ExpressLayerType } from "@opentelemetry/instrumentation-express";
 import { HttpInstrumentation } from "@opentelemetry/instrumentation-http";
-// NodeTracerProvider is the default tracer provider for Node.js
-// Necessary to register instrumentations
-import { NodeTracerProvider, ParentBasedSampler, TraceIdRatioBasedSampler } from "@opentelemetry/sdk-trace-node";
-// Use sdk-trace base to send create manual traces and send them to the exporter
-import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
-import { detectResources } from "@opentelemetry/resources";
+// TracerProvider is necessary to register instrumentations and to send manual traces to the exporter
+import { BatchSpanProcessor, ParentBasedSampler, TraceIdRatioBasedSampler, TracerProvider } from "@opentelemetry/sdk-trace";
+import { detectResources, resourceFromAttributes } from "@opentelemetry/resources";
 import { gcpDetector } from "@opentelemetry/resource-detector-gcp";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-proto";
 import { GoogleAuth } from "google-auth-library";
@@ -32,15 +31,18 @@ export default ({ serviceName = "default", debug = false, instrumentations = [] 
     },
   });
 
-  const resource = detectResources({ detectors: [ gcpDetector ] });
+  const resource = detectResources({ detectors: [ gcpDetector ] })
+    .merge(resourceFromAttributes({ "service.name": serviceName }));
 
-  const provider = new NodeTracerProvider({
+  const provider = new TracerProvider({
     resource,
     sampler: new ParentBasedSampler({ root: new TraceIdRatioBasedSampler(0.01) }),
     spanProcessors: [ new BatchSpanProcessor(exporter) ],
   });
 
-  provider.register();
+  context.setGlobalContextManager(new AsyncLocalStorageContextManager());
+  propagation.setGlobalPropagator(new CompositePropagator({ propagators: [ new W3CTraceContextPropagator(), new W3CBaggagePropagator() ] }));
+  trace.setGlobalTracerProvider(provider);
   providerRegistered = true;
 
   registerInstrumentations({
