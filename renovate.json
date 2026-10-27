@@ -4,7 +4,7 @@
   "rebaseWhen": "conflicted",
   "extends": [
     "config:js-lib",
-    "npm:unpublishSafe",
+    "security:minimumReleaseAgeNpm",
     ":configMigration",
     ":disableRateLimiting"
   ]
