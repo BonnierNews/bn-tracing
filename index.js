@@ -27,7 +27,8 @@ export default ({ serviceName = "default", debug = false, instrumentations = [] 
     url: "https://telemetry.googleapis.com/v1/traces",
     async headers() {
       const authClient = await auth.getClient();
-      return authClient.getRequestHeaders();
+      // google-auth-library returns a fetch Headers object; the OTLP exporter needs a plain object
+      return Object.fromEntries(await authClient.getRequestHeaders());
     },
   });
 
@@ -37,7 +38,7 @@ export default ({ serviceName = "default", debug = false, instrumentations = [] 
   const provider = new TracerProvider({
     resource,
     sampler: new ParentBasedSampler({ root: new TraceIdRatioBasedSampler(0.01) }),
-    spanProcessors: [ new BatchSpanProcessor(exporter) ],
+    spanProcessors: [ new BatchSpanProcessor({ exporter }) ],
   });
 
   context.setGlobalContextManager(new AsyncLocalStorageContextManager());
