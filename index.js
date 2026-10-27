@@ -33,7 +33,11 @@ export default ({ serviceName = "default", debug = false, instrumentations = [] 
   });
 
   const resource = detectResources({ detectors: [ gcpDetector ] })
-    .merge(resourceFromAttributes({ "service.name": serviceName }));
+    .merge(resourceFromAttributes({
+      "service.name": serviceName,
+      // Required by the Telemetry API, which rejects exports without it
+      "gcp.project_id": auth.getProjectId(),
+    }));
 
   const provider = new TracerProvider({
     resource,
