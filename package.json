@@ -27,7 +27,7 @@
     "google-auth-library": "^11.0.2"
   },
   "devDependencies": {
-    "@bonniernews/eslint-config": "3.0.0",
+    "@bonniernews/eslint-config": "3.1.0",
     "eslint": "9.39.5",
     "rollup": "^4.63.1"
   },
